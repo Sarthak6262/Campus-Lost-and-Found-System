@@ -1,0 +1,434 @@
+{
+  "info": {
+    "_postman_id": "campusfind-2024",
+    "name": "CampusFind API",
+    "description": "Complete API collection for CampusFind — Campus Lost & Found Management System.\n\n## Setup\n1. Import this collection into Postman\n2. Create an environment with `base_url = http://localhost:8000`\n3. Login and the token will be saved automatically\n4. Use `{{token}}` for protected endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000"},
+    {"key": "token", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/register",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"STU001\",\n  \"name\": \"Sarthak Wakchaure\",\n  \"email\": \"student@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Password@123\",\n  \"department\": \"BCA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var response = pm.response.json();",
+                  "if (response.success && response.data && response.data.access_token) {",
+                  "    pm.collectionVariables.set('token', response.data.access_token);",
+                  "    pm.environment.set('token', response.data.access_token);",
+                  "    console.log('Token saved successfully');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/login",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"Password@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var response = pm.response.json();",
+                  "if (response.success && response.data && response.data.access_token) {",
+                  "    pm.collectionVariables.set('token', response.data.access_token);",
+                  "    pm.environment.set('token', response.data.access_token);",
+                  "    console.log('Admin token saved');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/auth/login",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@campusfind.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Current User",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/auth/me",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/me",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/users/me",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"9876543210\",\n  \"department\": \"MCA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Items",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/me/items",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "My Claims",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/me/claims",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Items",
+      "item": [
+        {
+          "name": "Create Lost Item",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/items/lost",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_name\": \"Black Wallet\",\n  \"category\": \"WALLET\",\n  \"description\": \"Black leather wallet containing college ID\",\n  \"color\": \"Black\",\n  \"location\": \"College Library\",\n  \"item_date\": \"2026-10-08\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Found Item",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/items/found",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_name\": \"Samsung Earbuds\",\n  \"category\": \"ELECTRONICS\",\n  \"description\": \"White earbuds charging case\",\n  \"color\": \"White\",\n  \"location\": \"College Canteen\",\n  \"item_date\": \"2026-10-08\"\n}"
+            }
+          }
+        },
+        {
+          "name": "All Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/items?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "items"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            },
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Lost Items",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/items/lost",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Found Items",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/items/found",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Item Details",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/items/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/items/1",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_name\": \"Updated Item Name\",\n  \"location\": \"New Location\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Item",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/items/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Search Items",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/items/search?category=ELECTRONICS&type=FOUND&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "items", "search"],
+              "query": [
+                {"key": "category", "value": "ELECTRONICS"},
+                {"key": "type", "value": "FOUND"},
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
+            },
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Matching Items",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/items/1/matches",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Upload Item Image",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/items/1/image",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "file", "type": "file", "src": "/path/to/image.jpg"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claims",
+      "item": [
+        {
+          "name": "Create Claim",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/claims",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": 1,\n  \"reason\": \"This is my lost earbuds.\",\n  \"identification_details\": \"There is a small scratch on the charging case.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "My Claims",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/claims/my",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Claim Details",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/claims/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/dashboard",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "All Users",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/users",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/users/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Update User Status",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/admin/users/1/status",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/admin/users/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "All Items (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/items",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Delete Item (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/admin/items/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Update Item Status (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/admin/items/1/status",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CLOSED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "All Claims (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/claims",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Approve Claim",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/admin/claims/1/approve",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"admin_remark\": \"Ownership verified. Item returned to student.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reject Claim",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/admin/claims/1/reject",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"admin_remark\": \"Ownership could not be verified.\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
