@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, 
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_current_user_optional
 from app.database.database import get_db
 from app.models.item import ItemCategory, ItemStatus, ItemType
 from app.models.user import User
@@ -58,7 +58,7 @@ def search_items(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     """Search items with multiple filters."""
     service = ItemService(db)
@@ -193,7 +193,7 @@ def get_all_items(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     """Get all items."""
     service = ItemService(db)
@@ -220,7 +220,7 @@ def get_all_items(
 def get_item(
     item_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     """Get a single item by ID."""
     service = ItemService(db)

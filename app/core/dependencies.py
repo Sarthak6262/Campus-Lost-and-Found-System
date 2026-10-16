@@ -11,10 +11,43 @@ from app.core.security import decode_access_token
 from app.database.database import get_db
 from app.models.user import User, UserRole
 
+from typing import Optional
+
 logger = logging.getLogger(__name__)
 
 # Bearer token extractor
 bearer_scheme = HTTPBearer()
+optional_bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def get_current_user_optional(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_bearer_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """
+    Extract current user if a valid token is provided; returns None otherwise.
+    Does not raise 401 when unauthenticated.
+    """
+    if not credentials:
+        return None
+
+    payload = decode_access_token(credentials.credentials)
+    if not payload:
+        return None
+
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+
+    try:
+        user = db.query(User).filter(User.id == int(user_id)).first()
+    except (ValueError, TypeError):
+        return None
+
+    if not user or not user.is_active:
+        return None
+
+    return user
 
 
 def get_current_user(
