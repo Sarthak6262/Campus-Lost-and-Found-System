@@ -1,6 +1,7 @@
 import React from 'react';
 import { Compass, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../../utils/constants';
 
 export const Footer: React.FC = () => {
   return (
@@ -56,7 +57,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-1.5">
               <li>
                 <a
-                  href="http://127.0.0.1:8000/docs"
+                  href={`${API_BASE_URL || ''}/docs`}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-brand-600 transition"
@@ -66,7 +67,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="http://127.0.0.1:8000/redoc"
+                  href={`${API_BASE_URL || ''}/redoc`}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-brand-600 transition"
@@ -76,7 +77,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="http://127.0.0.1:8000/health"
+                  href={`${API_BASE_URL || ''}/health`}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-brand-600 transition"

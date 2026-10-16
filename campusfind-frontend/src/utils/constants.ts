@@ -1,7 +1,7 @@
 import { ItemCategory, ItemStatus, ItemType } from '../types/item';
 import { ClaimStatus } from '../types/claim';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const CATEGORIES: { label: string; value: ItemCategory }[] = [
   { label: 'Electronics', value: 'ELECTRONICS' },
